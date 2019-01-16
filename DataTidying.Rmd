@@ -18,10 +18,7 @@ library (tidyr)
 
 # Data cleaning
 
-
-
-
-read in data file
++read in data file
 ```{r}
 
 ##directly retrieve the data from the http, right click the download button and copy the address
@@ -44,14 +41,42 @@ head (catch)
 # use pipe (%>%, ctrl+shift+m) operator to pass the function values other functions without defining new variables to store the intermediate results
 
 
-# catch_clean <- catch %>% 
+# catch_long <- catch %>% 
 #   select (Region, Year, Chinook, Sockeye, Coho, Pink, Chum)  
 
-catch_clean <- catch %>% 
+catch_long <- catch %>% 
   select(-All, -notesRegCode) %>% 
   gather (key="species", value="catch", -Year, -Region)
 
-head (catch_clean) 
+head (catch_long) 
+
+
+```
+
++Find the bad values
+
+```{r, eval=F,echo=F}
+test_catch <- as.integer(catch_long$catch)
+
+i <- which(is.na(test_catch)==T)
+
+catch_long[i,]
+
+
+```
+
+
++Rename the column 
++erronenus value due to OCR issue, chang i to 1
+
+```{r}
+catch_clean <- catch_long %>% 
+  rename(catch_thousands = catch)  %>% 
+  mutate(catch_thousands= ifelse(catch_thousands=="I","1",catch_thousands)) %>% 
+  mutate(catch_thousands=as.integer(catch_thousands)) %>% 
+  mutate(catch=catch_thousands*1000)
+
+head(catch_clean)  
 
 
 ```
@@ -59,15 +84,55 @@ head (catch_clean)
 
 
 # Split, apply, combine
+
++calculate the total catch by region
+
 ```{r}
 
+catch_total <- catch_clean %>% 
+  group_by(Region, Year) %>% 
+  summarise(catch_region=sum(catch), n_obs=n())
+
+head(catch_total)  
+
 ```
++filter for chinook
+```{r}
+catch_chinook <-catch_clean %>% 
+  filter(species=="Chinook"|Region=="SSE") %>% 
+  arrange(-Year) # sort in descending order
 
 
+head(catch_chinook) 
+
+```
 
 
 # Join  
+
++read in the region_df data
+
 ```{r}
+region_defs <- read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.303.1", method = "libcurl"),
+                        stringsAsFactors = FALSE)
+
+head(region_defs)  
+
 
 ```
+```{r}
+region_clean <- region_defs %>% 
+  select(code,mgmtArea) %>% 
+  rename(Region=code)
+
+head(region_clean)
+```
+```{r}
+
+catch_join<- left_join(catch_clean,region_clean) #by=c("Region"="code")) 
+
+
+head(catch_join)
+```
+
 
