@@ -7,4 +7,4 @@ This repository is used to
 * use git with RStudio
 
 ## Credits
-*test
+

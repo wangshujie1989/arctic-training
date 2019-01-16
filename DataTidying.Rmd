@@ -1,0 +1,48 @@
+---
+title: "DataTidying"
+author: "ShujieWang"
+date: "January 16, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, warning=F, message=F}
+library (dplyr)  
+library (tidyr)  
+
+```
+
+
+# Data cleaning
+
+
+
+
+read in data file
+```{r}
+
+##directly retrieve the data from the http, right click the download button and copy the address
+
+catch <- read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1", method='libcurl'), stringsAsFactors = FALSE)    
+
+```
+
+
+
+
+# Split, apply, combine
+```{r}
+
+```
+
+
+
+
+# Join  
+```{r}
+
+```
+
