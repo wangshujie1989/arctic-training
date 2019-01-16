@@ -269,6 +269,8 @@ head(catch_total)  </code></pre>
   arrange(-Year) # sort in descending order
 
 
+
+
 head(catch_chinook) </code></pre>
 <pre><code>##   Region Year species catch_thousands  catch
 ## 1    SSE 1997 Chinook              38  38000
@@ -321,6 +323,59 @@ head(region_clean)</code></pre>
 ## 4    SSE 1889 Chinook               0     0 Southern Southeast Alaska
 ## 5    SSE 1890 Chinook               0     0 Southern Southeast Alaska
 ## 6    SSE 1891 Chinook               0     0 Southern Southeast Alaska</code></pre>
+</div>
+<div id="spread" class="section level1">
+<h1>Spread</h1>
+<p>+make a wide dataframe using spread</p>
+<pre class="r"><code>catch_wide&lt;- catch_clean %&gt;% 
+  filter (Year&gt;1990) %&gt;% 
+  select(-catch_thousands) %&gt;% 
+  spread(key=Year, value=catch)
+
+head(catch_wide)</code></pre>
+<pre><code>##   Region species 1991   1992 1993   1994 1995 1996 1997
+## 1    ALU Chinook    0      0    0      0    0    0    0
+## 2    ALU    Chum    0   2000 1000   1000    0    0    0
+## 3    ALU    Coho    0      0    0      0    0    0    0
+## 4    ALU    Pink    0 320000    0 860000    0    0    0
+## 5    ALU Sockeye 1000   3000    0      0    0    0    0
+## 6    BER Chinook    0      0    0      0    0    0    0</code></pre>
+</div>
+<div id="separate-and-unite-functions" class="section level1">
+<h1>separate and unite functions</h1>
+<ul>
+<li>YYYY-MM-DD</li>
+</ul>
+<pre class="r"><code>dates_df &lt;- data.frame(date = c(&quot;5/24/1930&quot;,
+                                &quot;5/25/1930&quot;,
+                                &quot;5/26/1930&quot;,
+                                &quot;5/27/1930&quot;,
+                                &quot;5/28/1930&quot;),
+                       stringsAsFactors = FALSE)
+
+
+dates_sep&lt;- dates_df %&gt;% 
+  separate(col=date,into = c(&quot;month&quot;,&quot;day&quot;,&quot;year&quot;),sep=&quot;/&quot;,remove=F)  
+
+dates_unite&lt;-dates_sep %&gt;% 
+  unite(date_iso,year,month,day,sep = &quot;-&quot;)
+
+
+
+head(dates_sep)</code></pre>
+<pre><code>##        date month day year
+## 1 5/24/1930     5  24 1930
+## 2 5/25/1930     5  25 1930
+## 3 5/26/1930     5  26 1930
+## 4 5/27/1930     5  27 1930
+## 5 5/28/1930     5  28 1930</code></pre>
+<pre class="r"><code>head(dates_unite)</code></pre>
+<pre><code>##        date  date_iso
+## 1 5/24/1930 1930-5-24
+## 2 5/25/1930 1930-5-25
+## 3 5/26/1930 1930-5-26
+## 4 5/27/1930 1930-5-27
+## 5 5/28/1930 1930-5-28</code></pre>
 </div>
 
 
