@@ -28,8 +28,33 @@ read in data file
 
 catch <- read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1", method='libcurl'), stringsAsFactors = FALSE)    
 
+head (catch)  
+
+
+  
+
 ```
 
+
++Remove marginal sum and notes column
++Remove from wide to long format
+
+```{r}
+
+# use pipe (%>%, ctrl+shift+m) operator to pass the function values other functions without defining new variables to store the intermediate results
+
+
+# catch_clean <- catch %>% 
+#   select (Region, Year, Chinook, Sockeye, Coho, Pink, Chum)  
+
+catch_clean <- catch %>% 
+  select(-All, -notesRegCode) %>% 
+  gather (key="species", value="catch", -Year, -Region)
+
+head (catch_clean) 
+
+
+```
 
 
 
