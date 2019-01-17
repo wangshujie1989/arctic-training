@@ -51,6 +51,15 @@ head(esc_annual)
 
 ```
 
+# write csv file
+```{r}
+write.csv(esc_annual, "derived_data/annual_escapement.csv", row.names=F)
+
+```
+
+
+
+
 ```{r}
 datatable (esc_annual)
 
