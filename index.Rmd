@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE) # not showing the codes on the HTML page
 ```
 
 # read in library
@@ -15,6 +15,7 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(DT)
+library(leaflet)
 ```
 
 
@@ -109,4 +110,28 @@ ggsave("figures/region_escapement.jpg",plot=p,height=10, width=10,units="in", dp
 
 
 ```
+
+
+# create interactive map 
+
+make a map using leaflet
+
++find unique locations with lat, lon values
+
+```{r}
+locations <- esc %>% 
+  distinct(Location, Latitude, Longitude) %>% 
+  drop_na()
+
+datatable(locations)
+```
+
+Create our interactive map
+```{r}
+leaflet(locations) %>% 
+  addTiles() %>% 
+  addMarkers(~ Longitude, ~Latitude, popup=~Location)
+
+```
+
 
