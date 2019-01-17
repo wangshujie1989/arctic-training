@@ -9,22 +9,95 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+# read in library
+```{r}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(DT)
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
+# read in data
+```{r}
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+esc <- read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn%3Auuid%3Af119a05b-bbe7-4aea-93c6-85434dcb1c5e", method='libcurl'), stringsAsFactors = FALSE)  
+
+head(esc)
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# calculate the annual, regional total escapment
++"separate"" the date into year - month -day
++"group_by""summarise" to calculate the sum over unique region-year-species combination
+
+```{r}
+
+esc_annual <- esc %>% 
+  separate(sampleDate, into=c("year","month","day"),sep="-") %>% 
+  mutate(year=as.numeric(year)) %>% 
+  group_by(SASAP.Region, Species, year) %>% 
+  summarize(escapement=sum(DailyCount)) %>% 
+  filter(Species %in% c("Chinook","Sockeye","Pink","Chum","Coho"))
+
+
+
+head(esc_annual)
+  
+
+
+
+
+
+```
+
+```{r}
+datatable (esc_annual)
+
+```
+
+
+# static plots
+
+```{r}
+ggplot(data=esc_annual,mapping=aes(x=Species, y=escapement, fill=SASAP.Region )) +
+  geom_col()
+
+
+
+```
+
+```{r}
+
+mytheme <- theme_bw() +
+  theme(plot.title = element_text(hjust=0.5))
+
+ggplot(data=filter(esc_annual, SASAP.Region=="Kodiak"), aes(x=year, y=escapement, color=Species)) +
+  geom_line() +
+  geom_point() +
+  ylab ("escapement (number of fish)") +
+  ggtitle("Kodiak salmon escapement") +
+  mytheme
+
+```
+
+
+
+
+# plot time series of escapement by species for all 
+
+
+```{r, fig.height=10, fig.width=10}
+p <- ggplot(esc_annual, aes(x=year, y=escapement, color=Species))+
+  geom_line()+
+  geom_point()+
+  facet_wrap(~SASAP.Region, scales="free")+
+  mytheme
+
+p
+
+ggsave("figures/region_escapement.jpg",plot=p,height=10, width=10,units="in", dpi=400)
+
+
+```
+
