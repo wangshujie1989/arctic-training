@@ -68,3 +68,18 @@ spirit_bears2 <- bears$gbif$data$Ursus_maritimus
 
 ```
 
+
+# read netcdf data
+
+```{r}
+
+
+
+```
+
+
+
+
+
+
+
