@@ -1,0 +1,96 @@
+---
+title: "Reproducible paper with R"
+author:
+- Shujie Wang, swang@ldeo.columbia.edu
+- 'Patrick '
+- Marco
+date: "`Sys_Date()`"
+output:
+  pdf_document: default
+  html_document: default
+bibliography: references.bib
+---
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# install.packages(c("broom","captioner"))
+
+```
+
+```{r}
+library(ggplot2)
+library(knitr)
+library(captioner)
+library(broom)
+```
+
+
+```{r, echo=FALSE,message=FALSE, results="hide"}
+
+data("diamonds")
+head(diamonds)
+
+```
+```{r figcaps, echo=FALSE, message=FALSE, results='hide'}
+# Figure and table caption setup
+tbl_caps <- captioner(prefix = "Table")
+tbl_caps("themodel", "This is a broomed linear model summary table.")
+cap_themodel <- tbl_caps("themodel")
+
+fig_caps <- captioner(prefix = "Figure")
+fig_caps("pricevscarat", "The relationship between price and carat for the diamonds dataset.")
+cap_pricevscarat <- fig_caps("pricevscarat")
+```
+
+# Abstract
+
+
+
+# Keywords
+
+
+# 1. Introduction
+
+I really like using R [@RCoreTeam] for science because of tools like RStudio [@RStudio] and RMarkdown [@RMarkdown].
+This document is a quick demonstration of writing an academic paper in RMarkdown.
+There's a lot of other resources available on the web but hopefully you'll find this document useful as an example.
+
+
+# 2. Method
+
+We can also put some more advanced math in our paper and it will be beautifully typeset:
+
+\[\sum_{i=1}^{N}{log(i) + \frac{\omega}{x}}\]
+
+
+
+# 3. Results
+```{r pricevscarat, echo=FALSE, fig.cap=cap_pricevscarat, fig.width=8, fig.height=4, fig.align='center', cache=TRUE}
+ggplot(diamonds,aes(x = carat, y =price, color = clarity))+
+  geom_point()+
+  labs(x="Carats", y="price")
+
+```
+
+
+
+```{r}
+
+mod<-lm(price ~ carat, diamonds)
+kable(tidy(mod), digits=2, caption=cap_themodel)
+```
+
+
+
+# 4. Discussion
+
+
+
+# Reference
+
